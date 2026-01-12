@@ -23,20 +23,22 @@ object MvvmStructure {
          │   ├─ MainActivity.kt
          │   └─ MainViewModel.kt
          ├─ login/
-         │   ├─ LoginActivity.kt
-         │   ├─ LoginFragment.kt
+         │   ├─ LoginScreen.kt
          │   └─ LoginViewModel.kt
-         └─ dashboard/
-             ├─ DashboardFragment.kt
-             └─ DashboardViewModel.kt
+         ├─ dashboard/
+         │   ├─ DashboardScreen.kt
+         │   └─ DashboardViewModel.kt
+         └─ theme/
+             ├─ Color.kt
+             ├─ Theme.kt
+             └─ Type.kt
 
         di/
         utils/
-
-        App.kt
     """.trimIndent()
 
     fun directories(): List<String> = listOf(
+        // data
         "data/local/dao",
         "data/local/entity",
         "data/remote/api",
@@ -44,14 +46,18 @@ object MvvmStructure {
         "data/mapper",
         "data/repository",
 
+        // domain
         "domain/model",
         "domain/repository",
         "domain/usecase",
 
+        // ui
         "ui/main",
         "ui/login",
         "ui/dashboard",
+        "ui/theme",
 
+        // core
         "di",
         "utils"
     )

@@ -4,29 +4,127 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.kickstart.plugin.dependency.DependencyResolver
 import com.kickstart.plugin.dependency.MvvmDependencyCatalog
+import com.kickstart.plugin.dependency.VersionKeyResolver
+import com.kickstart.plugin.version.MavenVersionFetcher
 import java.io.File
 
 object VersionCatalogInjector {
 
-    fun addMvvmDependencies(project: Project, catalogFile: File) {
+    fun inject(project: Project, catalog: File) {
+        val original = catalog.readText()
+
+        val versions = DependencyResolver.resolveLatestVersions()
+        println("Resolved lifecycle = $versions")
+
         WriteCommandAction.runWriteCommandAction(project) {
-            val content = catalogFile.readText()
+            var content = original
 
-            val librariesIndex = content.indexOf("[libraries]")
-            if (librariesIndex == -1) return@runWriteCommandAction
+            // ---------- [versions] ----------
+            content = ensureSection(content, "versions")
 
-            val insertPos = content.length
-            val builder = StringBuilder(content)
+            content = insertIntoSection(
+                content,
+                "versions",
+                buildString {
+                    appendCommentOnce(content, "# MVVM versions\n")
 
-            MvvmDependencyCatalog.dependencies.forEach { dep ->
-                if (!content.contains(dep.alias)) {
-                    builder.append(
-                        "\n${dep.alias} = { group = \"${dep.group}\", name = \"${dep.name}\" }"
+                    versions.forEach { (key, version) ->
+                        if (!content.contains("$key =")) {
+                            append("$key = \"$version\"\n")
+                        }
+                    }
+                }
+            )
+
+            // ---------- [libraries] ----------
+            content = ensureSection(content, "libraries")
+
+            content = insertIntoSection(
+                content,
+                "libraries",
+                buildString {
+                    appendCommentOnce(original, "# Lifecycle / MVVM\n")
+
+                    MvvmDependencyCatalog.dependencies.forEach { dep ->
+                        val versionKey = VersionKeyResolver.versionKeyFor(dep)
+
+                        if (!content.contains("${dep.alias} =")) {
+                            append(
+                                "${dep.alias} = { " +
+                                        "group = \"${dep.group}\", " +
+                                        "name = \"${dep.name}\", " +
+                                        "version.ref = \"$versionKey\" " +
+                                        "}\n"
+                            )
+                        }
+                    }
+
+                }
+            )
+
+            // ---------- [plugins] ----------
+            content = ensureSection(content, "plugins")
+
+            if (!content.contains("ksp =")) {
+                val kspVersion = MavenVersionFetcher.fetchLatestRelease(
+                    "com.google.devtools.ksp",
+                    "symbol-processing-api"
+                )
+
+                if (kspVersion != null) {
+                    content = insertIntoSection(
+                        content,
+                        "plugins",
+                        buildString {
+                            appendCommentOnce(original, "# Code generation (KSP)\n")
+                            append(
+                                "ksp = { id = \"com.google.devtools.ksp\", version = \"$kspVersion\" }\n"
+                            )
+                        }
                     )
                 }
             }
 
-            catalogFile.writeText(builder.toString())
+            catalog.writeText(content)
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------------------
+
+    private fun ensureSection(content: String, section: String): String {
+        return if (content.contains("[$section]")) {
+            content
+        } else {
+            "$content\n[$section]\n"
+        }
+    }
+
+    private fun insertIntoSection(
+        content: String,
+        section: String,
+        toInsert: String
+    ): String {
+        if (toInsert.isBlank()) return content
+
+        val sectionHeader = "[$section]"
+        val startIndex = content.indexOf(sectionHeader)
+        if (startIndex == -1) return content
+
+        val insertPos = content.indexOf('\n', startIndex) + 1
+
+        return content.take(insertPos) +
+                toInsert +
+                content.substring(insertPos)
+    }
+
+    private fun StringBuilder.appendCommentOnce(
+        content: String,
+        comment: String
+    ) {
+        if (!content.contains(comment.trim())) {
+            append(comment)
         }
     }
 }

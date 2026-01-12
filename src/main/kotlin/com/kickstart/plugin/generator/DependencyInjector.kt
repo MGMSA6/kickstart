@@ -2,44 +2,50 @@ package com.kickstart.plugin.generator
 
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.kickstart.plugin.dependency.DependencyResolver
+import com.kickstart.plugin.dependency.DependencyScope
+import com.kickstart.plugin.dependency.MvvmDependencyCatalog
 import java.io.File
 
 
 object DependencyInjector {
 
-    fun addMvvmDependencies(project: Project, gradleFile: File) {
-        val resolvedDeps = DependencyResolver.resolveMvvm()
-        if (resolvedDeps.isEmpty()) return
-
+    fun addUsingCatalog(project: Project, gradle: File) {
         WriteCommandAction.runWriteCommandAction(project) {
-            val content = gradleFile.readText()
+            val content = gradle.readText()
             if (!content.contains("dependencies")) return@runWriteCommandAction
 
-            val isKotlinDsl = gradleFile.name.endsWith(".kts")
+            val isKts = gradle.name.endsWith(".kts")
 
-            val newLines = resolvedDeps
+            val newLines = MvvmDependencyCatalog.dependencies
                 .filterNot { dep ->
-                    content.contains("${dep.group}:${dep.artifact}")
+                    // avoid duplicates
+                    content.contains(dep.alias.replace("-", "."))
                 }
                 .map { dep ->
-                    if (isKotlinDsl)
-                        """implementation("${dep.group}:${dep.artifact}:${dep.version}")"""
-                    else
-                        """implementation "${dep.group}:${dep.artifact}:${dep.version}""""
+                    val accessor = "libs.${dep.alias.replace("-", ".")}"
+
+                    when (dep.scope) {
+                        DependencyScope.KSP -> {
+                            if (isKts) "ksp($accessor)" else "ksp $accessor"
+                        }
+
+                        DependencyScope.IMPLEMENTATION -> {
+                            if (isKts) "implementation($accessor)" else "implementation $accessor"
+                        }
+                    }
                 }
 
             if (newLines.isEmpty()) return@runWriteCommandAction
 
-            val updated = content.replace(
-                "dependencies {",
-                buildString {
-                    append("dependencies {\n")
-                    newLines.forEach { append("    $it\n") }
-                }
+            gradle.writeText(
+                content.replace(
+                    "dependencies {",
+                    buildString {
+                        append("dependencies {\n")
+                        newLines.forEach { append("    $it\n") }
+                    }
+                )
             )
-
-            gradleFile.writeText(updated)
         }
     }
 }

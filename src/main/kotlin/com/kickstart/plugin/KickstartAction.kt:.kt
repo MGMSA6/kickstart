@@ -4,14 +4,16 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.Messages
 import com.kickstart.plugin.generator.DependencyInjector
+import com.kickstart.plugin.generator.HiltAppGenerator
+import com.kickstart.plugin.generator.KspEnabler
 import com.kickstart.plugin.generator.MvvmFolderGenerator
 import com.kickstart.plugin.generator.VersionCatalogInjector
 import com.kickstart.plugin.ui.KickstartWizardDialog
+import com.kickstart.plugin.utils.AndroidModuleDetector
 import com.kickstart.plugin.utils.AndroidSourceResolver
 import com.kickstart.plugin.utils.BasePackageDetector
 import com.kickstart.plugin.utils.GradleFileFinder
 import com.kickstart.plugin.utils.VersionCatalogDetector
-
 
 class KickstartAction : AnAction("Kickstart") {
 
@@ -36,7 +38,7 @@ class KickstartAction : AnAction("Kickstart") {
         }
 
         // 3. Detect base package
-        val basePackageDir = BasePackageDetector.detect(javaDir)
+        val basePackageDir = BasePackageDetector.detect(javaDir, project)
         if (basePackageDir == null) {
             Messages.showErrorDialog(
                 project,
@@ -49,24 +51,31 @@ class KickstartAction : AnAction("Kickstart") {
         // 4. Generate MVVM folders
         MvvmFolderGenerator.generate(project, basePackageDir)
 
-        // 5. Dependency handling
-        val versionCatalog = VersionCatalogDetector.findCatalog(project)
+        // 4.1 Generate App.kt + Hilt setup
+        val basePackage = BasePackageDetector.detectPackageName(project)
+            ?: return
+        HiltAppGenerator.generate(
+            project = project,
+            basePackageDir = basePackageDir,
+            basePackage = basePackage
+        )
 
-        if (versionCatalog != null) {
-            // Preferred modern approach
-            VersionCatalogInjector.addMvvmDependencies(project, versionCatalog)
+        // 4.1 Generate App.kt + Hilt setup
+        val appModules = AndroidModuleDetector.findAppModules(project)
 
-            Messages.showInfoMessage(
+        if (appModules.isEmpty()) {
+            Messages.showErrorDialog(
                 project,
-                "MVVM setup completed successfully ✅\n" +
-                        "Folders created and dependencies added via Version Catalog.",
+                "No Android application modules found.",
                 "Kickstart"
             )
             return
         }
 
-        // 6. Fallback to app build.gradle(.kts)
+        // 5. Dependency handling
+        val versionCatalog = VersionCatalogDetector.findCatalog(project)
         val gradleFile = GradleFileFinder.findAppGradleFile(project)
+
         if (gradleFile == null) {
             Messages.showWarningDialog(
                 project,
@@ -77,15 +86,21 @@ class KickstartAction : AnAction("Kickstart") {
             return
         }
 
-        DependencyInjector.addMvvmDependencies(project, gradleFile)
+        if (versionCatalog != null) {
+            // Modern setup: Version Catalog + KSP
+            VersionCatalogInjector.inject(project, versionCatalog)
+            KspEnabler.ensureEnabled(project, gradleFile)
+            DependencyInjector.addUsingCatalog(project, gradleFile)
+        } else {
+            // (Optional) future: normal Gradle dependency injection
+            DependencyInjector.addUsingCatalog(project, gradleFile)
+        }
 
         Messages.showInfoMessage(
             project,
             "MVVM setup completed successfully ✅\n" +
-                    "Folders created and dependencies added.",
+                    "Lifecycle, Room, Coroutines & Hilt configured using KSP.",
             "Kickstart"
         )
     }
-
-
 }

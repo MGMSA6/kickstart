@@ -3,6 +3,7 @@ package com.kickstart.plugin
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.Messages
+import com.kickstart.plugin.generator.CoreNetworkGenerator
 import com.kickstart.plugin.generator.DependencyInjector
 import com.kickstart.plugin.generator.HiltAppGenerator
 import com.kickstart.plugin.generator.KspEnabler
@@ -52,7 +53,7 @@ class KickstartAction : AnAction("Kickstart") {
         MvvmFolderGenerator.generate(project, basePackageDir)
 
         // 4.1 Generate App.kt + Hilt setup
-        val basePackage = BasePackageDetector.detectPackageName(project)
+        val basePackage = BasePackageDetector.detectPackageName(javaDir, project)
             ?: return
         HiltAppGenerator.generate(
             project = project,
@@ -71,6 +72,13 @@ class KickstartAction : AnAction("Kickstart") {
             )
             return
         }
+
+        //  4.2 GENERATE CORE NETWORK FILES (HERE)
+        CoreNetworkGenerator.generate(
+            project = project,
+            basePackage = basePackage,
+            basePackageDir = basePackageDir
+        )
 
         // 5. Dependency handling
         val versionCatalog = VersionCatalogDetector.findCatalog(project)
@@ -93,7 +101,7 @@ class KickstartAction : AnAction("Kickstart") {
             DependencyInjector.addUsingCatalog(project, gradleFile)
         } else {
             // (Optional) future: normal Gradle dependency injection
-            DependencyInjector.addUsingCatalog(project, gradleFile)
+            DependencyInjector.addDirect(project, gradleFile)
         }
 
         Messages.showInfoMessage(

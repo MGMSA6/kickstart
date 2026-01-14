@@ -3,62 +3,62 @@ package com.kickstart.plugin.architecture
 object MvvmStructure {
 
     fun preview(): String = """
-        data/
-         ├─ local/
-         │   ├─ dao/
-         │   └─ entity/
-         ├─ remote/
-         │   ├─ api/
-         │   └─ dto/
-         ├─ mapper/
-         └─ repository/
+    data/
+     ├─ mapper/
+     ├─ remote/
+     │   ├─ api/
+     │   ├─ dto/
+     │   ├─ interceptor/
+     │   └─ NetworkClient.kt
+     └─ repository/
+         └─ *RepositoryImpl.kt
 
-        domain/
-         ├─ model/
-         ├─ repository/
-         └─ usecase/
+    domain/
+     ├─ model/
+     └─ repository/
 
-        ui/
-         ├─ main/
-         │   ├─ MainActivity.kt
-         │   └─ MainViewModel.kt
-         ├─ login/
-         │   ├─ LoginScreen.kt
-         │   └─ LoginViewModel.kt
-         ├─ dashboard/
-         │   ├─ DashboardScreen.kt
-         │   └─ DashboardViewModel.kt
-         └─ theme/
-             ├─ Color.kt
-             ├─ Theme.kt
-             └─ Type.kt
+    presentation/
+     ├─ navigation/
+     ├─ screens/
+     ├─ state/
+     └─ viewmodel/
 
-        di/
-        utils/
-    """.trimIndent()
+    di/
+     └─ NetworkModule.kt
+
+    util/
+     ├─ ApiConstants.kt
+     ├─ NetworkResult.kt
+     ├─ ErrorHandler.kt
+     ├─ ConnectivityChecker.kt
+     └─ HeaderProvider.kt
+""".trimIndent()
+
 
     fun directories(): List<String> = listOf(
+
         // data
-        "data/local/dao",
-        "data/local/entity",
+        "data/mapper",
         "data/remote/api",
         "data/remote/dto",
-        "data/mapper",
+        "data/remote/interceptor",
         "data/repository",
 
         // domain
         "domain/model",
         "domain/repository",
-        "domain/usecase",
 
-        // ui
-        "ui/main",
-        "ui/login",
-        "ui/dashboard",
-        "ui/theme",
+        // presentation (from screenshot)
+        "presentation/navigation",
+        "presentation/screens",
+        "presentation/state",
+        "presentation/viewmodel",
 
-        // core
+        // dependency injection
         "di",
-        "utils"
+
+        // utilities / core
+        "util"
     )
+
 }

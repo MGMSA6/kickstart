@@ -4,10 +4,48 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.kickstart.plugin.dependency.DependencyScope
 import com.kickstart.plugin.dependency.MvvmDependencyCatalog
+import com.kickstart.plugin.version.MavenVersionFetcher
 import java.io.File
 
 
 object DependencyInjector {
+
+    fun addDirect(project: Project, gradleFile: File) {
+        WriteCommandAction.runWriteCommandAction(project) {
+
+            val content = gradleFile.readText()
+
+            val deps = MvvmDependencyCatalog.dependencies
+                .filterNot { dep ->
+                    content.contains("${dep.group}:${dep.name}")
+                }
+                .map { dep ->
+                    val version = MavenVersionFetcher.fetchLatestRelease(dep.group, dep.name)
+                        ?: return@map null
+
+                    when (dep.scope) {
+                        DependencyScope.KSP ->
+                            "ksp(\"${dep.group}:${dep.name}:$version\")"
+
+                        else ->
+                            "implementation(\"${dep.group}:${dep.name}:$version\")"
+                    }
+                }
+                .filterNotNull()
+
+            if (deps.isEmpty()) return@runWriteCommandAction
+
+            val updated = content.replace(
+                Regex("""dependencies\s*\{"""),
+                buildString {
+                    append("dependencies {\n")
+                    deps.forEach { append("    $it\n") }
+                }
+            )
+
+            gradleFile.writeText(updated)
+        }
+    }
 
     fun addUsingCatalog(project: Project, gradle: File) {
         WriteCommandAction.runWriteCommandAction(project) {

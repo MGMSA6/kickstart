@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 object AndroidNamespaceResolver {
 
     fun resolve(project: Project): String? {
-        val gradleFile = GradleFileFinder.findAppGradleFile(project) ?: return null
+        val gradleFile = GradleFileFinder.findModuleGradleFile(project) ?: return null
         val content = gradleFile.readText()
 
         // namespace = "com.example.demo"

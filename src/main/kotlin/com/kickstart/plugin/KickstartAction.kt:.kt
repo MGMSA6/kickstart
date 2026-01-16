@@ -64,14 +64,13 @@ class KickstartAction : AnAction("Kickstart") {
             }
         }
 
-
         // 5. Build Configuration (Dependency Injection)
         handleDependencies(project, selectedArchitecture.displayName)
     }
 
     private fun handleDependencies(project: Project, archName: String) {
         val versionCatalog = VersionCatalogDetector.findCatalog(project)
-        val gradleFile = GradleFileFinder.findAppGradleFile(project)
+        val gradleFile = GradleFileFinder.findModuleGradleFile(project)
 
         if (gradleFile == null) {
             Messages.showWarningDialog(

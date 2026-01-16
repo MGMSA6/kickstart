@@ -12,78 +12,86 @@ object DependencyInjector {
 
     fun addDirect(project: Project, gradleFile: File) {
         WriteCommandAction.runWriteCommandAction(project) {
-
             val content = gradleFile.readText()
 
-            val deps = MvvmDependencyCatalog.dependencies
-                .filterNot { dep ->
-                    content.contains("${dep.group}:${dep.name}")
-                }
+            // 1. Filter dependencies that aren't already there
+            val depsToInject = MvvmDependencyCatalog.dependencies
+                .filterNot { dep -> content.contains("${dep.group}:${dep.name}") }
                 .map { dep ->
-                    val version = MavenVersionFetcher.fetchLatestRelease(dep.group, dep.name)
-                        ?: return@map null
-
-                    when (dep.scope) {
-                        DependencyScope.KSP ->
-                            "ksp(\"${dep.group}:${dep.name}:$version\")"
-
-                        else ->
-                            "implementation(\"${dep.group}:${dep.name}:$version\")"
+                    val version =
+                        MavenVersionFetcher.fetchLatestRelease(dep.group, dep.name) ?: "1.0.0"
+                    val line = when (dep.scope) {
+                        DependencyScope.KSP -> "ksp(\"${dep.group}:${dep.name}:$version\")"
+                        else -> "implementation(\"${dep.group}:${dep.name}:$version\")"
                     }
+                    line
                 }
-                .filterNotNull()
 
-            if (deps.isEmpty()) return@runWriteCommandAction
+            if (depsToInject.isEmpty()) return@runWriteCommandAction
 
-            val updated = content.replace(
-                Regex("""dependencies\s*\{"""),
-                buildString {
-                    append("dependencies {\n")
-                    deps.forEach { append("    $it\n") }
-                }
-            )
-
-            gradleFile.writeText(updated)
+            // 2. Inject using the robust helper
+            val updatedContent = injectIntoDependenciesBlock(content, depsToInject)
+            gradleFile.writeText(updatedContent)
         }
     }
 
-    fun addUsingCatalog(project: Project, gradle: File) {
+    fun addUsingCatalog(project: Project, gradleFile: File) {
         WriteCommandAction.runWriteCommandAction(project) {
-            val content = gradle.readText()
-            if (!content.contains("dependencies")) return@runWriteCommandAction
+            val content = gradleFile.readText()
+            val isKts = gradleFile.name.endsWith(".kts")
 
-            val isKts = gradle.name.endsWith(".kts")
-
-            val newLines = MvvmDependencyCatalog.dependencies
+            val depsToInject = MvvmDependencyCatalog.dependencies
                 .filterNot { dep ->
-                    // avoid duplicates
-                    content.contains(dep.alias.replace("-", "."))
+                    // Check for alias (handle both libs.name and libs.name.get())
+                    val normalizedAlias = dep.alias.replace("-", ".")
+                    content.contains(normalizedAlias)
                 }
                 .map { dep ->
                     val accessor = "libs.${dep.alias.replace("-", ".")}"
-
                     when (dep.scope) {
-                        DependencyScope.KSP -> {
-                            if (isKts) "ksp($accessor)" else "ksp $accessor"
-                        }
-
-                        DependencyScope.IMPLEMENTATION -> {
-                            if (isKts) "implementation($accessor)" else "implementation $accessor"
-                        }
+                        DependencyScope.KSP -> if (isKts) "ksp($accessor)" else "ksp $accessor"
+                        else -> if (isKts) "implementation($accessor)" else "implementation $accessor"
                     }
                 }
 
-            if (newLines.isEmpty()) return@runWriteCommandAction
+            if (depsToInject.isEmpty()) return@runWriteCommandAction
 
-            gradle.writeText(
-                content.replace(
-                    "dependencies {",
-                    buildString {
-                        append("dependencies {\n")
-                        newLines.forEach { append("    $it\n") }
-                    }
-                )
-            )
+            // 3. Inject using the robust helper
+            val updatedContent = injectIntoDependenciesBlock(content, depsToInject)
+            gradleFile.writeText(updatedContent)
         }
     }
+
+    /**
+     * Finds the 'dependencies { ... }' block and injects new lines right at the start.
+     * This handles variations in whitespace and KTS/Groovy formatting.
+     */
+    private fun injectIntoDependenciesBlock(
+        content: String,
+        newLines: List<String>
+    ): String {
+
+        val regex = Regex(
+            """dependencies\s*\{([\s\S]*?)\}""",
+            RegexOption.MULTILINE
+        )
+
+        val match = regex.find(content) ?: return content
+
+        val existingBlock = match.groupValues[1]
+
+        val injection = buildString {
+            newLines.forEach {
+                append("    ").append(it).append("\n")
+            }
+        }
+
+        val updatedBlock = "dependencies {\n$injection$existingBlock}"
+
+        return content.replaceRange(
+            match.range,
+            updatedBlock
+        )
+    }
+
 }

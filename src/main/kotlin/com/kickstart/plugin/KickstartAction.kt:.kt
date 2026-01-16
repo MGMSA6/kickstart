@@ -2,113 +2,99 @@ package com.kickstart.plugin
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.kickstart.plugin.generator.CoreNetworkGenerator
-import com.kickstart.plugin.generator.DependencyInjector
-import com.kickstart.plugin.generator.HiltAppGenerator
-import com.kickstart.plugin.generator.KspEnabler
-import com.kickstart.plugin.generator.MvvmFolderGenerator
-import com.kickstart.plugin.generator.VersionCatalogInjector
+import com.kickstart.plugin.architecture.ArchitectureType
+import com.kickstart.plugin.generator.*
 import com.kickstart.plugin.ui.KickstartWizardDialog
-import com.kickstart.plugin.utils.AndroidModuleDetector
-import com.kickstart.plugin.utils.AndroidSourceResolver
-import com.kickstart.plugin.utils.BasePackageDetector
-import com.kickstart.plugin.utils.GradleFileFinder
-import com.kickstart.plugin.utils.VersionCatalogDetector
+import com.kickstart.plugin.utils.*
 
 class KickstartAction : AnAction("Kickstart") {
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
 
-        // 1. Show wizard
+        // 1. Show wizard and get user selection
         val dialog = KickstartWizardDialog()
         dialog.show()
         if (!dialog.isOK) return
 
-        // 2. Locate src/main/java
+        // Extract selected architecture from dialog
+        val selectedArchitecture = dialog.getSelectedArchitecture()
+
+        // 2. Resolve Environment
         val javaDir = AndroidSourceResolver.findMainJavaDir(project)
-        if (javaDir == null) {
+        val basePackageDir = javaDir?.let { BasePackageDetector.detect(it, project) }
+        val basePackage = javaDir?.let { BasePackageDetector.detectPackageName(it, project) }
+
+        if (javaDir == null || basePackageDir == null || basePackage == null) {
             Messages.showErrorDialog(
                 project,
-                "Kickstart supports Android projects only.\n" +
-                        "Could not find src/main/java directory.",
-                "Kickstart"
+                "Kickstart support requires a valid Android project structure (src/main/java).",
+                "Initialization Error"
             )
             return
         }
 
-        // 3. Detect base package
-        val basePackageDir = BasePackageDetector.detect(javaDir, project)
-        if (basePackageDir == null) {
-            Messages.showErrorDialog(
-                project,
-                "Could not detect base package under src/main/java.",
-                "Kickstart"
-            )
-            return
-        }
+        // 3. Folder Generation (Generic)
+        FolderGenerator.generate(project, basePackageDir, selectedArchitecture)
 
-        // 4. Generate MVVM folders
-        MvvmFolderGenerator.generate(project, basePackageDir)
-
-        // 4.1 Generate App.kt + Hilt setup
-        val basePackage = BasePackageDetector.detectPackageName(javaDir, project)
-            ?: return
+        // 4. Boilerplate Generation (Hilt, Network, Core)
+        // These generators should ideally be updated to adapt to 'selectedArchitecture' if needed
         HiltAppGenerator.generate(
             project = project,
             basePackageDir = basePackageDir,
             basePackage = basePackage
         )
 
-        // 4.1 Generate App.kt + Hilt setup
-        val appModules = AndroidModuleDetector.findAppModules(project)
+        when(selectedArchitecture) {
+            ArchitectureType.MVVM -> {
+                MVVMCoreGenerator.generate(
+                    project = project,
+                    basePackage = basePackage,
+                    basePackageDir = basePackageDir
+                )
+            }
+            ArchitectureType.MVP -> {
+                MvpCoreGenerator.generate(project, basePackage, basePackageDir)
+            }
 
-        if (appModules.isEmpty()) {
-            Messages.showErrorDialog(
-                project,
-                "No Android application modules found.",
-                "Kickstart"
-            )
-            return
+            ArchitectureType.MVI -> {
+                MviCoreGenerator.generate(project, basePackage, basePackageDir)
+            }
         }
 
-        //  4.2 GENERATE CORE NETWORK FILES (HERE)
-        CoreNetworkGenerator.generate(
-            project = project,
-            basePackage = basePackage,
-            basePackageDir = basePackageDir
-        )
 
-        // 5. Dependency handling
+        // 5. Build Configuration (Dependency Injection)
+        handleDependencies(project, selectedArchitecture.displayName)
+    }
+
+    private fun handleDependencies(project: Project, archName: String) {
         val versionCatalog = VersionCatalogDetector.findCatalog(project)
         val gradleFile = GradleFileFinder.findAppGradleFile(project)
 
         if (gradleFile == null) {
             Messages.showWarningDialog(
                 project,
-                "MVVM folders were created, but app/build.gradle(.kts) was not found.\n" +
-                        "Please add dependencies manually.",
-                "Kickstart"
+                "$archName folders were created, but app/build.gradle(.kts) was not found. Please add dependencies manually.",
+                "Gradle Not Found"
             )
             return
         }
 
         if (versionCatalog != null) {
-            // Modern setup: Version Catalog + KSP
             VersionCatalogInjector.inject(project, versionCatalog)
             KspEnabler.ensureEnabled(project, gradleFile)
             DependencyInjector.addUsingCatalog(project, gradleFile)
         } else {
-            // (Optional) future: normal Gradle dependency injection
             DependencyInjector.addDirect(project, gradleFile)
         }
 
         Messages.showInfoMessage(
             project,
-            "MVVM setup completed successfully ✅\n" +
-                    "Lifecycle, Room, Coroutines & Hilt configured using KSP.",
-            "Kickstart"
+            "$archName setup completed successfully ✅\n" +
+                    "Hilt, Network, and Core utilities configured.",
+            "Kickstart Success"
         )
     }
 }

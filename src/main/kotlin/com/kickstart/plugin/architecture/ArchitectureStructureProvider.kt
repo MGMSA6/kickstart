@@ -2,39 +2,16 @@ package com.kickstart.plugin.architecture
 
 object ArchitectureStructureProvider {
 
-    fun getStructure(architecture: String): String {
-        return when (architecture) {
-            "MVVM" -> MvvmStructure.preview()
-            "Clean Architecture" -> clean()
-            "MVP" -> mvp()
-            else -> "No structure defined yet."
-        }
+    fun getStructure(type: ArchitectureType): String = when (type) {
+        ArchitectureType.MVP -> MvpStructure.preview()
+        ArchitectureType.MVVM -> MvvmStructure.preview()
+        ArchitectureType.MVI -> MviStructure.preview()
     }
 
-    private fun mvvm(): String = """
-        presentation/
-         ├─ ui/
-         ├─ viewmodel/
-        domain/
-         ├─ model/
-         ├─ usecase/
-        data/
-         ├─ repository/
-         ├─ datasource/
-    """.trimIndent()
+    fun getDirectories(type: ArchitectureType): List<String> = when (type) {
+        ArchitectureType.MVP -> MvpStructure.directories()
+        ArchitectureType.MVVM -> MvvmStructure.directories()
+        ArchitectureType.MVI -> MviStructure.directories()
+    }
 
-    private fun clean(): String = """
-        app/
-        ├─ presentation/
-        ├─ domain/
-        ├─ data/
-        core/
-        di/
-    """.trimIndent()
-
-    private fun mvp(): String = """
-        view/
-        presenter/
-        model/
-    """.trimIndent()
 }

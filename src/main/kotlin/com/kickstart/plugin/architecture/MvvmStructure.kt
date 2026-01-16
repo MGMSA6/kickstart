@@ -1,64 +1,37 @@
 package com.kickstart.plugin.architecture
 
 object MvvmStructure {
-
     fun preview(): String = """
     data/
-     ├─ mapper/
-     ├─ remote/
+     ├─ mapper/                 # DTO to Domain converters
+     ├─ remote/                 # Retrofit/Ktor logic
      │   ├─ api/
-     │   ├─ dto/
-     │   ├─ interceptor/
-     │   └─ NetworkClient.kt
-     └─ repository/
-         └─ *RepositoryImpl.kt
+     │   └─ dto/
+     └─ repository/             # Repository Implementations
 
     domain/
-     ├─ model/
-     └─ repository/
+     ├─ model/                  # Pure Kotlin Models
+     ├─ repository/             # Repository Interfaces
+     └─ usecase/                # Business Logic
 
     presentation/
-     ├─ navigation/
-     ├─ screens/
-     ├─ state/
-     └─ viewmodel/
+     ├─ feature/                # Grouped by feature
+     │   ├─ viewmodel/
+     │   ├─ view/               # Activity/Fragment/Screen
+     │   └─ state/              # UI State classes
+     └─ component/              # Reusable UI elements
 
-    di/
-     └─ NetworkModule.kt
+    di/                         # Hilt/Koin Modules
 
-    util/
-     ├─ ApiConstants.kt
-     ├─ NetworkResult.kt
-     ├─ ErrorHandler.kt
-     ├─ ConnectivityChecker.kt
-     └─ HeaderProvider.kt
+    core/                       # Base classes (BaseViewModel, etc.)
+    
+    util/                       # NetworkResult, Extensions, etc.
 """.trimIndent()
 
-
     fun directories(): List<String> = listOf(
-
-        // data
-        "data/mapper",
-        "data/remote/api",
-        "data/remote/dto",
-        "data/remote/interceptor",
-        "data/repository",
-
-        // domain
-        "domain/model",
-        "domain/repository",
-
-        // presentation (from screenshot)
-        "presentation/navigation",
-        "presentation/screens",
-        "presentation/state",
-        "presentation/viewmodel",
-
-        // dependency injection
-        "di",
-
-        // utilities / core
-        "util"
+        "data/mapper", "data/remote/api", "data/remote/dto", "data/repository",
+        "domain/model", "domain/repository", "domain/usecase",
+        "presentation/feature/viewmodel", "presentation/feature/view", "presentation/feature/state", "presentation/component",
+        "di", "core", "util"
     )
-
 }

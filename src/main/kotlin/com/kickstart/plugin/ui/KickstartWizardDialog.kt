@@ -2,16 +2,16 @@ package com.kickstart.plugin.ui
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
+import com.kickstart.plugin.architecture.ArchitectureStructureProvider
+import com.kickstart.plugin.architecture.ArchitectureType
+import java.awt.Dimension
 import javax.swing.*
-import javax.swing.JScrollPane
-import javax.swing.JTextArea
 
 class KickstartWizardDialog : DialogWrapper(true) {
 
     private lateinit var mainPanel: JPanel
-    private lateinit var architectureCombo: JComboBox<String>
+    private lateinit var architectureCombo: JComboBox<ArchitectureType>
     private lateinit var previewArea: JTextArea
-
 
     init {
         title = "Kickstart Project Setup"
@@ -24,9 +24,8 @@ class KickstartWizardDialog : DialogWrapper(true) {
 
         mainPanel.add(JLabel("Select Architecture"))
 
-        architectureCombo = ComboBox(
-            arrayOf("Clean Architecture", "MVVM", "MVP", "MVI", "MVC", "Redux", "VIPER")
-        )
+        architectureCombo = ComboBox(ArchitectureType.entries.toTypedArray())
+        architectureCombo.maximumSize = Dimension(Int.MAX_VALUE, 30)
 
         mainPanel.add(Box.createVerticalStrut(8))
         mainPanel.add(architectureCombo)
@@ -34,8 +33,9 @@ class KickstartWizardDialog : DialogWrapper(true) {
         mainPanel.add(Box.createVerticalStrut(12))
         mainPanel.add(JLabel("Folder Structure Preview"))
 
-        previewArea = JTextArea(10, 40)
+        previewArea = JTextArea(14, 50)
         previewArea.isEditable = false
+        previewArea.font = previewArea.font.deriveFont(12f)
 
         updatePreview()
 
@@ -50,14 +50,10 @@ class KickstartWizardDialog : DialogWrapper(true) {
     }
 
     private fun updatePreview() {
-        val selected = architectureCombo.selectedItem as String
-        previewArea.text =
-            com.kickstart.plugin.architecture.ArchitectureStructureProvider
-                .getStructure(selected)
+        val selected = architectureCombo.selectedItem as ArchitectureType
+        previewArea.text = ArchitectureStructureProvider.getStructure(selected)
     }
 
-
-    fun getSelectedArchitecture(): String {
-        return architectureCombo.selectedItem as String
-    }
+    fun getSelectedArchitecture(): ArchitectureType =
+        architectureCombo.selectedItem as ArchitectureType
 }

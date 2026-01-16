@@ -3,7 +3,7 @@ package com.kickstart.plugin.generator
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.kickstart.plugin.dependency.DependencyScope
-import com.kickstart.plugin.dependency.MvvmDependencyCatalog
+import com.kickstart.plugin.dependency.DependencyCatalog
 import com.kickstart.plugin.version.MavenVersionFetcher
 import java.io.File
 
@@ -15,7 +15,7 @@ object DependencyInjector {
             val content = gradleFile.readText()
 
             // 1. Filter dependencies that aren't already there
-            val depsToInject = MvvmDependencyCatalog.dependencies
+            val depsToInject = DependencyCatalog.dependencies
                 .filterNot { dep -> content.contains("${dep.group}:${dep.name}") }
                 .map { dep ->
                     val version =
@@ -40,7 +40,7 @@ object DependencyInjector {
             val content = gradleFile.readText()
             val isKts = gradleFile.name.endsWith(".kts")
 
-            val depsToInject = MvvmDependencyCatalog.dependencies
+            val depsToInject = DependencyCatalog.dependencies
                 .filterNot { dep ->
                     // Check for alias (handle both libs.name and libs.name.get())
                     val normalizedAlias = dep.alias.replace("-", ".")

@@ -3,7 +3,7 @@ package com.kickstart.plugin.generator
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.kickstart.plugin.dependency.DependencyResolver
-import com.kickstart.plugin.dependency.MvvmDependencyCatalog
+import com.kickstart.plugin.dependency.DependencyCatalog
 import com.kickstart.plugin.dependency.VersionKeyResolver
 import com.kickstart.plugin.version.MavenVersionFetcher
 import java.io.File
@@ -14,7 +14,7 @@ object VersionCatalogInjector {
         val original = catalog.readText()
 
         val versions = DependencyResolver.resolveLatestVersions()
-        println("Resolved lifecycle = $versions")
+        println("Resolved versions = $versions")
 
         WriteCommandAction.runWriteCommandAction(project) {
             var content = original
@@ -26,7 +26,7 @@ object VersionCatalogInjector {
                 content,
                 "versions",
                 buildString {
-                    appendCommentOnce(content, "# MVVM versions\n")
+                    appendCommentOnce(content, "# Dependency versions\n")
 
                     versions.forEach { (key, version) ->
                         if (!content.contains("$key =")) {
@@ -43,9 +43,9 @@ object VersionCatalogInjector {
                 content,
                 "libraries",
                 buildString {
-                    appendCommentOnce(original, "# Lifecycle / MVVM\n")
+                    appendCommentOnce(content, "# Libraries\n")
 
-                    MvvmDependencyCatalog.dependencies.forEach { dep ->
+                    DependencyCatalog.dependencies.forEach { dep ->
                         val versionKey = VersionKeyResolver.versionKeyFor(dep)
 
                         if (!content.contains("${dep.alias} =")) {
@@ -58,7 +58,6 @@ object VersionCatalogInjector {
                             )
                         }
                     }
-
                 }
             )
 
@@ -76,7 +75,7 @@ object VersionCatalogInjector {
                         content,
                         "plugins",
                         buildString {
-                            appendCommentOnce(original, "# Code generation (KSP)\n")
+                            appendCommentOnce(content, "# Code generation\n")
                             append(
                                 "ksp = { id = \"com.google.devtools.ksp\", version = \"$kspVersion\" }\n"
                             )

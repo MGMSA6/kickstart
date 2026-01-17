@@ -1,47 +1,169 @@
-🚀 Kickstart
+🚀 Kickstart – Android Project Initializer
 
-Kickstart is an Android Studio plugin that helps you instantly bootstrap your project with a clean, scalable architecture — without manual setup.
+Kickstart is an Android Studio / IntelliJ plugin that bootstraps Android projects the same way Spring Initializr does for backend development.
 
-It generates folder structures, core boilerplate, and best-practice scaffolding so you can start building features immediately.✨ Supported Architectures
+It generates project structure, core classes, and dependencies so developers can start building features immediately instead of spending hours on setup and configuration.
 
-Kickstart currently supports the following design patterns:
+🎯 What Problem Does Kickstart Solve?
 
-🧩 MVP (Model–View–Presenter)
+Starting a new Android project usually means:
 
-Clear separation of View and Presenter
+Creating folders manually
 
-Easy to test presentation logic
+Deciding architecture
 
-Suitable for legacy or XML-based projects
+Adding dependencies
 
-🧠 MVVM (Model–View–ViewModel)
+Configuring Gradle, KSP, DI, networking, persistence
 
-Modern Android recommended architecture
+Writing repetitive boilerplate
 
-Lifecycle-aware components
+Kickstart automates all of this.
 
-Clean separation of UI and business logic
+👉 You focus on business logic and screens, not project setup.
 
-Ideal for Jetpack Compose and XML
+✨ Key Features
+🧱 Architecture-First Project Setup
 
-🔄 MVI (Model–View–Intent)
+Choose an architecture and Kickstart generates a clean, scalable structure:
 
-Unidirectional data flow
+MVVM
 
-Predictable state management
+MVP
 
-Great for complex UI states and Compose-first apps
+MVI (coming soon)
 
-🛠 What Kickstart Does
+Each architecture follows industry best practices.
 
-Based on the selected architecture, Kickstart automatically:
+📁 Automatic Project Structure Generation
 
-📁 Generates recommended project folder structure
+Example (MVVM):
 
-⚙️ Adds required dependencies (Version Catalog or normal Gradle)
+data/
+ ├─ local/
+ │   ├─ dao/
+ │   └─ entity/
+ ├─ remote/
+ │   ├─ api/
+ │   └─ dto/
+ ├─ mapper/
+ └─ repository/
 
-🧱 Creates core boilerplate classes (DI, networking, utilities)
+domain/
+ ├─ model/
+ ├─ repository/
+ └─ usecase/
 
-📐 Applies architecture best practices
+ui/
+ ├─ main/
+ ├─ login/
+ └─ dashboard/
 
-🚫 Avoids overwriting existing files (safe generation)
+di/
+utils/
+
+🧩 Core Class Generation
+
+Kickstart creates essential base classes so you don’t start from scratch:
+
+Base ViewModel / Presenter
+
+Repository interfaces
+
+UseCase templates
+
+Application class
+
+Dependency injection modules
+
+Network & database setup classes
+
+📦 Dependency Automation (Zero Guesswork)
+
+Kickstart automatically configures latest stable dependencies, including:
+
+Lifecycle / ViewModel
+
+Coroutines
+
+Room (KSP)
+
+Retrofit & OkHttp
+
+Hilt (KSP)
+
+Testing libraries
+
+✔ Uses Gradle Version Catalog when available
+✔ Falls back gracefully for older projects
+✔ Enables KSP automatically
+
+⚙️ Smart Project Detection
+
+Kickstart:
+
+Works only on Android projects
+
+Detects base package automatically
+
+Validates existing setup before injecting
+
+Avoids duplicate dependencies
+
+Keeps configuration clean and readable
+
+▶️ How It Works
+
+Open an Android project
+
+Go to Tools → Kickstart
+
+Choose architecture (MVVM / MVP / MVI)
+
+Click Generate
+
+Start building features 🚀
+
+🧠 Why Kickstart?
+Without Kickstart	With Kickstart
+Manual setup	One-click setup
+Copy-paste configs	Auto-configured
+Inconsistent structure	Standardized
+Boilerplate fatigue	Feature-focused
+
+Kickstart gives Android developers the same experience that Spring Initializr gives backend developers.
+
+🛣️ Roadmap
+
+Planned features:
+
+Clean Architecture support
+
+Feature-based modules
+
+Compose / XML templates
+
+API & repository generators
+
+Architecture preview before apply
+
+Undo / rollback support
+
+Custom presets per team
+
+📦 Installation
+
+🚧 Coming soon to JetBrains Marketplace
+
+For local development:
+
+./gradlew runIde
+
+🤝 Contributing
+
+Ideas, issues, and PRs are welcome.
+Kickstart aims to become the go-to initializer for Android projects.
+
+📄 License
+
+MIT License

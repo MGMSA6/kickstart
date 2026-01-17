@@ -128,30 +128,6 @@ Kickstart:
 
 ---
 
-## 🛣️ Roadmap
-
-Planned enhancements:
-- Clean Architecture support
-- Feature-based module generation
-- Compose & XML screen templates
-- API & Repository generators
-- Architecture preview before apply
-- Undo / rollback support
-- Team-based presets
-
----
-
-## 📦 Installation
-
-> 🚧 Coming soon to **JetBrains Marketplace**
-
-For local development:
-```
-./gradlew runIde
-```
-
----
-
 ## 🤝 Contributing
 
 Contributions, ideas, and suggestions are welcome.

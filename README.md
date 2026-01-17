@@ -9,15 +9,10 @@ It generates project structure, core classes, and dependencies so developers can
 Starting a new Android project usually means:
 
 . Creating folders manually
-
 . Deciding architecture
-
 . Adding dependencies
-
 . Configuring Gradle, KSP, DI, networking, persistence
-
 . Writing repetitive boilerplate
-
 . Kickstart automates all of this.
 
 👉 You focus on business logic and screens, not project setup.

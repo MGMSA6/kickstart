@@ -1,138 +1,158 @@
-# 🚀 Kickstart – Android Project Initializer
+# 🚀 Kickstart – Android Architecture Starter
 
-Kickstart is an **Android Studio / IntelliJ plugin** that bootstraps Android projects the same way **Spring Initializr** does for backend development.
+Kickstart is an **Android Studio / IntelliJ plugin** that helps you start Android projects quickly by generating a **clean architecture structure**, **core base classes**, and **essential dependencies**.
 
-It generates **project structure, core classes, and dependencies** so developers can focus on **building business logic and screens**, not configuring projects.
-
----
-
-## 🎯 Why Kickstart?
-
-Starting a new Android project usually means:
-- Creating folders manually
-- Deciding an architecture
-- Adding dependencies
-- Configuring Gradle, KSP, DI, networking, and persistence
-- Writing repetitive boilerplate code
-
-**Kickstart automates all of this.**
-
-> One click → Clean setup → Start coding 🚀
+The goal is simple:  
+👉 **Skip configuration and boilerplate, start building features directly.**
 
 ---
 
-## ✨ Features
+## 🎯 Purpose
 
-### 🧱 Architecture-Based Setup
-Choose an architecture and Kickstart generates a clean, scalable structure:
+When starting a new Android project, developers usually spend time on:
+- Creating architecture folders
+- Adding base contracts and core classes
+- Setting up networking and DI
+- Configuring dependencies
 
-- **MVVM**
-- **MVP**
-- **MVI** (coming soon)
-
-Each architecture follows **industry best practices**.
+**Kickstart automates this initial setup**, so you can focus on **business logic and UI** instead of project configuration.
 
 ---
 
-### 📁 Automatic Project Structure Generation
+## 🧱 Generated Project Structure
 
-Example (MVVM):
+Kickstart generates a structured package layout under your base package:
 
 ```
+core/
+ ├─ base/
+ │   ├─ BasePresenter
+ │   └─ BaseView
+ ├─ common/
+ │   └─ Resource
+ ├─ mvi/
+ │   ├─ BaseMviViewModel
+ │   └─ MviInterfaces
+
 data/
- ├─ local/
- │   ├─ dao/
- │   └─ entity/
+ ├─ mapper/
  ├─ remote/
  │   ├─ api/
- │   └─ dto/
- ├─ mapper/
- └─ repository/
+ │   │   └─ ApiService
+ │   ├─ dto/
+ │   └─ interceptor/
+ │       └─ LoggingInterceptor
+ ├─ repository/
+ └─ source/
+     └─ local/
 
 domain/
  ├─ model/
  ├─ repository/
  └─ usecase/
 
-ui/
- ├─ main/
- ├─ login/
- └─ dashboard/
+presentation/
+ └─ feature/
+     └─ FeatureContract
 
 di/
-utils/
+ ├─ AppModule
+ └─ NetworkModule
+
+ui/
+ └─ theme/
+     ├─ Color.kt
+     ├─ Theme.kt
+     └─ Type.kt
+
+util/
+ ├─ NetworkResult
+ ├─ DispatcherProvider
+ ├─ ApiConstants
+ ├─ ErrorHandler
+ └─ HeaderProvider
+
+App.kt  
+MainActivity.kt
 ```
 
 ---
 
-### 🧩 Core Class Generation
+## 🧩 What Kickstart Sets Up
 
-Kickstart creates essential base classes to get started quickly:
+### ✅ Core Architecture Support
+- Base contracts (Presenter / View)
+- MVI base ViewModel and interfaces
+- Common resource wrapper
 
-- Base ViewModel / Presenter
-- Repository interfaces
-- UseCase templates
-- Application class
-- Dependency Injection modules
-- Network & database setup classes
+### 🌐 Networking Foundation
+- Retrofit API service
+- OkHttp client
+- Logging interceptor
+- Network constants and headers
+- Centralized error handling
+
+### 💉 Dependency Injection
+- Application-level module
+- Network module
+
+### 🗂 Domain & Data Layers
+- Clear separation of:
+  - Data
+  - Domain
+  - Presentation
+- Repository and use-case placeholders
+
+### 🎨 UI Setup
+- Jetpack Compose theme files
+- Ready-to-use `MainActivity`
 
 ---
 
-### 📦 Automatic Dependency Configuration
+## 📦 Dependency Configuration
 
-Kickstart configures **latest stable dependencies** automatically:
-
+Kickstart configures essential dependencies such as:
 - Lifecycle / ViewModel
-- Kotlin Coroutines
-- Room (KSP)
+- Coroutines
 - Retrofit & OkHttp
-- Hilt (KSP)
-- Testing libraries
+- Dependency Injection
+- KSP (for code generation)
 
-✔ Uses **Gradle Version Catalog** when available  
-✔ Falls back gracefully for older projects  
-✔ Enables **KSP automatically**
-
----
-
-### ⚙️ Smart Project Detection
-
-Kickstart:
-- Works only for **Android projects**
-- Detects base package automatically
-- Validates existing setup before injecting
-- Avoids duplicate dependencies
-- Keeps Gradle configuration clean
+Dependencies are added in a **clean and maintainable way**, using modern Gradle practices.
 
 ---
 
 ## ▶️ How to Use
 
-1. Open an **Android project**
+1. Open an Android project
 2. Go to **Tools → Kickstart**
-3. Select architecture (**MVVM / MVP / MVI**)
-4. Click **Generate**
-5. Start building features 🚀
+3. Run the generator
+4. Start adding screens and business logic 🚀
 
 ---
 
-## 🧠 Kickstart vs Manual Setup
+## 🧠 Why Kickstart?
 
-| Manual Setup | Kickstart |
-|-------------|-----------|
-| Create folders by hand | Auto-generated |
-| Search dependencies | Auto-configured |
-| Copy-paste boilerplate | Generated |
-| Inconsistent structure | Standardized |
-| Time-consuming | Instant |
+| Without Kickstart | With Kickstart |
+|------------------|---------------|
+| Manual setup | Ready structure |
+| Boilerplate code | Base classes provided |
+| Network & DI setup | Pre-configured |
+| Slow start | Instant productivity |
+
+Kickstart helps you start projects **cleanly and consistently**.
 
 ---
 
-## 🤝 Contributing
+## 📦 Installation
 
-Contributions, ideas, and suggestions are welcome.
+> Currently used as a local plugin  
+> Marketplace publishing planned
 
-Kickstart aims to become the **default project initializer for Android developers**.
+Run locally with:
+```
+./gradlew runIde
+```
 
 ---
 

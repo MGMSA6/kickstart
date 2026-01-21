@@ -131,31 +131,6 @@ Dependencies are added in a **clean and maintainable way**, using modern Gradle 
 
 ---
 
-## 🧠 Why Kickstart?
-
-| Without Kickstart | With Kickstart |
-|------------------|---------------|
-| Manual setup | Ready structure |
-| Boilerplate code | Base classes provided |
-| Network & DI setup | Pre-configured |
-| Slow start | Instant productivity |
-
-Kickstart helps you start projects **cleanly and consistently**.
-
----
-
-## 📦 Installation
-
-> Currently used as a local plugin  
-> Marketplace publishing planned
-
-Run locally with:
-```
-./gradlew runIde
-```
-
----
-
 ## 📄 License
 
 MIT License

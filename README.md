@@ -1,63 +1,55 @@
-# 🚀 Kickstart – Android Architecture Starter
+# 🚀 Kickstart – Android Architecture Starter Plugin
 
-Kickstart is an **Android Studio / IntelliJ plugin** that helps you start Android projects quickly by generating a **clean architecture structure**, **core base classes**, and **essential dependencies**.
+Kickstart is an **Android Studio / IntelliJ plugin** that helps you bootstrap Android projects instantly by generating a **clean architecture structure**, **core base classes**, and **essential dependencies**.
 
-The goal is simple:  
-👉 **Skip configuration and boilerplate, start building features directly.**
+> Skip boilerplate. Start building features immediately.
 
 ---
 
-## 🎯 Purpose
+## 🎯 Why Kickstart?
 
-When starting a new Android project, developers usually spend time on:
+Starting a new Android project usually means repeating the same setup:
 - Creating architecture folders
-- Adding base contracts and core classes
+- Writing base classes and contracts
 - Setting up networking and DI
-- Configuring dependencies
+- Managing Gradle dependencies
 
-**Kickstart automates this initial setup**, so you can focus on **business logic and UI** instead of project configuration.
+**Kickstart automates this entire setup**, so you can focus on **business logic and UI** instead of configuration.
 
 ---
 
-## 🧱 Generated Project Structure
+## 🧱 Common Base Structure (Generated for All Architectures)
 
-Kickstart generates a structured package layout under your base package:
+This structure is **shared across MVVM, MVP, and MVI** and contains only **architecture-agnostic foundations**.
 
-```
+```text
 core/
  ├─ base/
  │   ├─ BasePresenter
  │   └─ BaseView
  ├─ common/
  │   └─ Resource
- ├─ mvi/
- │   ├─ BaseMviViewModel
- │   └─ MviInterfaces
 
 data/
- ├─ mapper/
+ ├─ mapper/               # DTO ↔ Domain converters
  ├─ remote/
  │   ├─ api/
  │   │   └─ ApiService
  │   ├─ dto/
  │   └─ interceptor/
  │       └─ LoggingInterceptor
- ├─ repository/
+ ├─ repository/           # Repository implementations
  └─ source/
-     └─ local/
+     └─ local/            # Room / local data source
 
 domain/
- ├─ model/
- ├─ repository/
- └─ usecase/
-
-presentation/
- └─ feature/
-     └─ FeatureContract
+ ├─ model/                # Pure domain models
+ ├─ repository/           # Repository interfaces
+ └─ usecase/              # Business logic
 
 di/
- ├─ AppModule
- └─ NetworkModule
+ ├─ AppModule              # App-level DI
+ └─ NetworkModule          # Retrofit / OkHttp setup
 
 ui/
  └─ theme/
@@ -72,65 +64,88 @@ util/
  ├─ ErrorHandler
  └─ HeaderProvider
 
-App.kt  
+App.kt
 MainActivity.kt
-```
 
----
 
-## 🧩 What Kickstart Sets Up
+🧩 Architecture-Specific Structures
 
-### ✅ Core Architecture Support
-- Base contracts (Presenter / View)
-- MVI base ViewModel and interfaces
-- Common resource wrapper
+After generating the common base, Kickstart adds architecture-specific folders and classes based on your selection.
 
-### 🌐 Networking Foundation
-- Retrofit API service
-- OkHttp client
-- Logging interceptor
-- Network constants and headers
-- Centralized error handling
+🟦 MVVM (Model–View–ViewModel)
+presentation/
+ └─ feature/
+     ├─ viewmodel/        # ViewModels
+     ├─ view/             # Activities / Fragments / Screens
+     └─ state/            # UI state models
 
-### 💉 Dependency Injection
-- Application-level module
-- Network module
+🟩 MVP (Model–View–Presenter)
+presentation/
+ └─ feature/
+     ├─ FeatureContract.kt     # View & Presenter interfaces
+     ├─ FeaturePresenter.kt    # Business logic
+     └─ FeatureActivity.kt     # UI implementation
 
-### 🗂 Domain & Data Layers
-- Clear separation of:
-  - Data
-  - Domain
-  - Presentation
-- Repository and use-case placeholders
+🟨 MVI (Model–View–Intent)
+presentation/
+ └─ feature/
+     ├─ FeatureContract.kt     # Intent, State, SideEffect
+     ├─ FeatureViewModel.kt    # Reducer & intent handler
+     └─ FeatureScreen.kt       # Compose UI
 
-### 🎨 UI Setup
-- Jetpack Compose theme files
-- Ready-to-use `MainActivity`
+core/
+ └─ mvi/
+     ├─ BaseMviViewModel
+     └─ MviInterfaces
 
----
+🌐 Networking Setup
 
-## 📦 Dependency Configuration
+Kickstart automatically configures:
 
-Kickstart configures essential dependencies such as:
-- Lifecycle / ViewModel
-- Coroutines
-- Retrofit & OkHttp
-- Dependency Injection
-- KSP (for code generation)
+Retrofit API service
 
-Dependencies are added in a **clean and maintainable way**, using modern Gradle practices.
+OkHttp client
 
----
+Logging interceptor
 
-## ▶️ How to Use
+Centralized error handling
 
-1. Open an Android project
-2. Go to **Tools → Kickstart**
-3. Run the generator
-4. Start adding screens and business logic 🚀
+API constants and headers
 
----
+💉 Dependency Injection
 
-## 📄 License
+Application-level DI module
 
-MIT License
+Network DI module
+
+Clean and scalable DI setup
+
+
+📦 Dependency Configuration
+
+Kickstart adds essential dependencies using modern Gradle version catalogs:
+
+Lifecycle & ViewModel
+
+Coroutines
+
+Retrofit & OkHttp
+
+Dependency Injection
+
+KSP (code generation)
+
+▶️ How to Use
+
+Open an Android project
+
+Navigate to Tools → Kickstart
+
+Select your architecture (MVVM / MVP / MVI)
+
+Click OK
+
+Start building features 🚀
+
+
+

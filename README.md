@@ -1,47 +1,161 @@
-🚀 Kickstart
+# 🚀 Kickstart – Android Architecture Starter
 
-Kickstart is an Android Studio plugin that helps you instantly bootstrap your project with a clean, scalable architecture — without manual setup.
+Kickstart is an **Android Studio / IntelliJ plugin** that helps you start Android projects quickly by generating a **clean architecture structure**, **core base classes**, and **essential dependencies**.
 
-It generates folder structures, core boilerplate, and best-practice scaffolding so you can start building features immediately.✨ Supported Architectures
+The goal is simple:  
+👉 **Skip configuration and boilerplate, start building features directly.**
 
-Kickstart currently supports the following design patterns:
+---
 
-🧩 MVP (Model–View–Presenter)
+## 🎯 Purpose
 
-Clear separation of View and Presenter
+When starting a new Android project, developers usually spend time on:
+- Creating architecture folders
+- Adding base contracts and core classes
+- Setting up networking and DI
+- Configuring dependencies
 
-Easy to test presentation logic
+**Kickstart automates this initial setup**, so you can focus on **business logic and UI** instead of project configuration.
 
-Suitable for legacy or XML-based projects
+---
 
-🧠 MVVM (Model–View–ViewModel)
+## 🧱 Generated Project Structure
 
-Modern Android recommended architecture
+Kickstart generates a structured package layout under your base package:
 
-Lifecycle-aware components
+```
+core/
+ ├─ base/
+ │   ├─ BasePresenter
+ │   └─ BaseView
+ ├─ common/
+ │   └─ Resource
+ ├─ mvi/
+ │   ├─ BaseMviViewModel
+ │   └─ MviInterfaces
 
-Clean separation of UI and business logic
+data/
+ ├─ mapper/
+ ├─ remote/
+ │   ├─ api/
+ │   │   └─ ApiService
+ │   ├─ dto/
+ │   └─ interceptor/
+ │       └─ LoggingInterceptor
+ ├─ repository/
+ └─ source/
+     └─ local/
 
-Ideal for Jetpack Compose and XML
+domain/
+ ├─ model/
+ ├─ repository/
+ └─ usecase/
 
-🔄 MVI (Model–View–Intent)
+presentation/
+ └─ feature/
+     └─ FeatureContract
 
-Unidirectional data flow
+di/
+ ├─ AppModule
+ └─ NetworkModule
 
-Predictable state management
+ui/
+ └─ theme/
+     ├─ Color.kt
+     ├─ Theme.kt
+     └─ Type.kt
 
-Great for complex UI states and Compose-first apps
+util/
+ ├─ NetworkResult
+ ├─ DispatcherProvider
+ ├─ ApiConstants
+ ├─ ErrorHandler
+ └─ HeaderProvider
 
-🛠 What Kickstart Does
+App.kt  
+MainActivity.kt
+```
 
-Based on the selected architecture, Kickstart automatically:
+---
 
-📁 Generates recommended project folder structure
+## 🧩 What Kickstart Sets Up
 
-⚙️ Adds required dependencies (Version Catalog or normal Gradle)
+### ✅ Core Architecture Support
+- Base contracts (Presenter / View)
+- MVI base ViewModel and interfaces
+- Common resource wrapper
 
-🧱 Creates core boilerplate classes (DI, networking, utilities)
+### 🌐 Networking Foundation
+- Retrofit API service
+- OkHttp client
+- Logging interceptor
+- Network constants and headers
+- Centralized error handling
 
-📐 Applies architecture best practices
+### 💉 Dependency Injection
+- Application-level module
+- Network module
 
-🚫 Avoids overwriting existing files (safe generation)
+### 🗂 Domain & Data Layers
+- Clear separation of:
+  - Data
+  - Domain
+  - Presentation
+- Repository and use-case placeholders
+
+### 🎨 UI Setup
+- Jetpack Compose theme files
+- Ready-to-use `MainActivity`
+
+---
+
+## 📦 Dependency Configuration
+
+Kickstart configures essential dependencies such as:
+- Lifecycle / ViewModel
+- Coroutines
+- Retrofit & OkHttp
+- Dependency Injection
+- KSP (for code generation)
+
+Dependencies are added in a **clean and maintainable way**, using modern Gradle practices.
+
+---
+
+## ▶️ How to Use
+
+1. Open an Android project
+2. Go to **Tools → Kickstart**
+3. Run the generator
+4. Start adding screens and business logic 🚀
+
+---
+
+## 🧠 Why Kickstart?
+
+| Without Kickstart | With Kickstart |
+|------------------|---------------|
+| Manual setup | Ready structure |
+| Boilerplate code | Base classes provided |
+| Network & DI setup | Pre-configured |
+| Slow start | Instant productivity |
+
+Kickstart helps you start projects **cleanly and consistently**.
+
+---
+
+## 📦 Installation
+
+> Currently used as a local plugin  
+> Marketplace publishing planned
+
+Run locally with:
+```
+./gradlew runIde
+```
+
+---
+
+## 📄 License
+
+MIT License

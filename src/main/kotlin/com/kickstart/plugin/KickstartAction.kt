@@ -70,7 +70,7 @@ class KickstartAction : AnAction("Kickstart") {
 
     private fun handleDependencies(project: Project, archName: String) {
         val versionCatalog = VersionCatalogDetector.findCatalog(project)
-        val gradleFile = GradleFileFinder.findModuleGradleFile(project)
+        val gradleFile = GradleFileFinder.findAppModuleGradle(project)
 
         if (gradleFile == null) {
             Messages.showWarningDialog(
@@ -85,8 +85,10 @@ class KickstartAction : AnAction("Kickstart") {
             VersionCatalogInjector.inject(project, versionCatalog)
             KspEnabler.ensureEnabled(project, gradleFile)
             DependencyInjector.addUsingCatalog(project, gradleFile)
+            GradleUtil.refreshProject(project)
         } else {
             DependencyInjector.addDirect(project, gradleFile)
+            GradleUtil.refreshProject(project)
         }
 
         Messages.showInfoMessage(

@@ -40,6 +40,12 @@ object DependencyResolver {
             "okhttp" to MavenVersionFetcher.fetchLatestRelease(
                 "com.squareup.okhttp3",
                 "okhttp"
+            ),
+
+            // ⚙️ KSP
+            "ksp" to MavenVersionFetcher.fetchLatestRelease(
+                "com.google.devtools.ksp",
+                "symbol-processing-api"
             )
         )
             .filterValues { it != null }

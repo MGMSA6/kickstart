@@ -1,0 +1,18 @@
+<ivy-module version="2.0">
+  <info organisation="bundledPlugin" module="org.intellij.groovy" revision="AI-241.18034.62.2411.12071903"/>
+  <configurations>
+    <conf name="default" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="Groovy" ext="jar" conf="default" url="plugins/Groovy/lib"/>
+    <artifact name="groovy-jps" ext="jar" conf="default" url="plugins/Groovy/lib"/>
+    <artifact name="groovy-rt" ext="jar" conf="default" url="plugins/Groovy/lib"/>
+    <artifact name="groovy-spock-rt" ext="jar" conf="default" url="plugins/Groovy/lib"/>
+    <artifact name="groovy-constants-rt" ext="jar" conf="default" url="plugins/Groovy/lib"/>
+    <artifact name="groovy-rt-class-loader" ext="jar" conf="default" url="plugins/Groovy/lib"/>
+  </publications>
+  <dependencies>
+    <dependency org="bundledPlugin" name="com.intellij.properties" rev="AI-241.18034.62.2411.12071903"/>
+    <dependency org="bundledPlugin" name="com.intellij.java" rev="AI-241.18034.62.2411.12071903"/>
+  </dependencies>
+</ivy-module>

@@ -1,23 +1,44 @@
 <idea-plugin>
+    <!-- Unique and permanent plugin ID -->
     <id>com.kickstart.plugin</id>
 
+    <!-- Plugin display name -->
     <name>Kickstart</name>
 
-    <vendor>YourCompany</vendor>
+    <!-- Vendor / Author -->
+    <vendor email="anand004.af@gmail.com"
+        url="https://github.com/MGMSA6/kickstart" />
 
+    <!-- Plugin description -->
     <description><![CDATA[
-        Kickstart helps developers instantly set up
-        project architecture and boilerplate code.
+        <p>
+            <b>Kickstart</b> is an Android Studio plugin that helps developers
+            instantly bootstrap Android projects with clean architecture
+            (MVVM / MVP / MVI), core base classes, and essential dependencies.
+        </p>
+
+        <p>
+            It eliminates repetitive setup so developers can focus on
+            building features instead of configuration.
+        </p>
     ]]></description>
 
-    <depends>com.intellij.modules.platform</depends>
+    <!-- Android Studio compatibility -->
+    <idea-version since-build="241" />
 
+    <!-- 🔴 REQUIRED for Android Studio -->
+    <depends>org.jetbrains.android</depends>
+    <depends>com.intellij.java</depends>
+
+    <!-- Actions -->
     <actions>
         <action
-                id="com.kickstart.plugin.KickstartAction"
-                class="com.kickstart.plugin.KickstartAction"
-                text="Kickstart"
-                description="Kickstart project setup">
+            id="com.kickstart.plugin.KickstartAction"
+            class="com.kickstart.plugin.KickstartAction"
+            text="Kickstart"
+            description="Generates project files.">
+
+            <!-- ✅ Correct menu location -->
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>

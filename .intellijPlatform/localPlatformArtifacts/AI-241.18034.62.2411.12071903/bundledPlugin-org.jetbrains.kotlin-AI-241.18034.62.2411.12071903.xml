@@ -1,0 +1,28 @@
+<ivy-module version="2.0">
+  <info organisation="bundledPlugin" module="org.jetbrains.kotlin" revision="AI-241.18034.62.2411.12071903"/>
+  <configurations>
+    <conf name="default" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="kotlin-base-jps" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlin-plugin-shared" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.kotlin-compiler-fe10" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.parcelize-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlin-gradle-tooling" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.android-extensions-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.scripting-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.assignment-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.allopen-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.noarg-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.sam-with-receiver-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.lombok-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.kotlin-compiler-ir" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.kotlinx-serialization-compiler-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlin-plugin" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.kotlin-jps-common" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+    <artifact name="kotlinc.kotlin-compiler-common" ext="jar" conf="default" url="plugins/Kotlin/lib"/>
+  </publications>
+  <dependencies>
+    <dependency org="bundledPlugin" name="com.intellij.java" rev="AI-241.18034.62.2411.12071903"/>
+  </dependencies>
+</ivy-module>

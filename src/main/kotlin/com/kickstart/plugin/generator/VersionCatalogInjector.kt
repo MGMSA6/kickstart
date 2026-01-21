@@ -14,7 +14,6 @@ object VersionCatalogInjector {
         val original = catalog.readText()
 
         val versions = DependencyResolver.resolveLatestVersions()
-        println("Resolved versions = $versions")
 
         WriteCommandAction.runWriteCommandAction(project) {
             var content = original
@@ -64,25 +63,37 @@ object VersionCatalogInjector {
             // ---------- [plugins] ----------
             content = ensureSection(content, "plugins")
 
-            if (!content.contains("ksp =")) {
-                val kspVersion = MavenVersionFetcher.fetchLatestRelease(
-                    "com.google.devtools.ksp",
-                    "symbol-processing-api"
-                )
+            content = insertIntoSection(
+                content,
+                "plugins",
+                buildString {
+                    appendCommentOnce(content, "# Plugins\n")
 
-                if (kspVersion != null) {
-                    content = insertIntoSection(
+                    injectPluginAlias(
                         content,
-                        "plugins",
-                        buildString {
-                            appendCommentOnce(content, "# Code generation\n")
-                            append(
-                                "ksp = { id = \"com.google.devtools.ksp\", version = \"$kspVersion\" }\n"
-                            )
-                        }
+                        this,
+                        alias = "ksp",
+                        id = "com.google.devtools.ksp",
+                        versionKey = "ksp"
+                    )
+
+                    injectPluginAlias(
+                        content,
+                        this,
+                        alias = "hilt-android",
+                        id = "com.google.dagger.hilt.android",
+                        versionKey = "hilt"
+                    )
+
+                    injectPluginAlias(
+                        content,
+                        this,
+                        alias = "kotlin-android",
+                        id = "org.jetbrains.kotlin.android",
+                        versionKey = "kotlin"
                     )
                 }
-            }
+            )
 
             catalog.writeText(content)
         }
@@ -126,4 +137,34 @@ object VersionCatalogInjector {
             append(comment)
         }
     }
+
+    private fun injectPluginAlias(
+        content: String,
+        builder: StringBuilder,
+        alias: String,
+        id: String,
+        versionKey: String
+    ) {
+        if (!isPluginAliasPresent(content, alias)) {
+            builder.append(
+                "$alias = { id = \"$id\", version.ref = \"$versionKey\" }\n"
+            )
+        }
+    }
+
+    private fun isPluginAliasPresent(content: String, alias: String): Boolean {
+        val pluginsStart = content.indexOf("[plugins]")
+        if (pluginsStart == -1) return false
+
+        val nextSectionStart = content.indexOf("\n[", pluginsStart + 1)
+        val pluginsSection = if (nextSectionStart != -1) {
+            content.substring(pluginsStart, nextSectionStart)
+        } else {
+            content.substring(pluginsStart)
+        }
+
+        return pluginsSection.contains("$alias =")
+    }
+
+
 }

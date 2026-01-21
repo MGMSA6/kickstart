@@ -6,21 +6,21 @@ import java.io.File
 
 object KspEnabler {
 
-    fun ensureEnabled(project: Project, gradle: File) {
+    fun ensureEnabled(project: Project, gradleFile: File) {
         WriteCommandAction.runWriteCommandAction(project) {
-            val content = gradle.readText()
+            val content = gradleFile.readText()
 
-            if (content.contains("com.google.devtools.ksp")) return@runWriteCommandAction
+            if (content.contains("libs.plugins.ksp")) return@runWriteCommandAction
 
             val updated = content.replace(
-                "plugins {",
+                Regex("""plugins\s*\{"""),
                 """
                 plugins {
-                    id("com.google.devtools.ksp")
+                    alias(libs.plugins.ksp)
                 """.trimIndent()
             )
 
-            gradle.writeText(updated)
+            gradleFile.writeText(updated)
         }
     }
 }

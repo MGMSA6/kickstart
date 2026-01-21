@@ -37,30 +37,40 @@ object DependencyInjector {
 
     fun addUsingCatalog(project: Project, gradleFile: File) {
         WriteCommandAction.runWriteCommandAction(project) {
+
+            ensurePluginAlias(gradleFile, "libs.plugins.ksp")
+            ensurePluginAlias(gradleFile, "libs.plugins.hilt.android")
+            ensurePluginAlias(gradleFile, "libs.plugins.jetbrains.kotlin.android")
+
             val content = gradleFile.readText()
             val isKts = gradleFile.name.endsWith(".kts")
 
             val depsToInject = DependencyCatalog.dependencies
                 .filterNot { dep ->
-                    // Check for alias (handle both libs.name and libs.name.get())
-                    val normalizedAlias = dep.alias.replace("-", ".")
-                    content.contains(normalizedAlias)
+                    val accessor = "libs.${dep.alias.replace("-", ".")}"
+                    content.contains(accessor)
                 }
                 .map { dep ->
                     val accessor = "libs.${dep.alias.replace("-", ".")}"
                     when (dep.scope) {
-                        DependencyScope.KSP -> if (isKts) "ksp($accessor)" else "ksp $accessor"
-                        else -> if (isKts) "implementation($accessor)" else "implementation $accessor"
+                        DependencyScope.KSP ->
+                            if (isKts) "ksp($accessor)" else "ksp $accessor"
+
+                        DependencyScope.TEST ->
+                            if (isKts) "testImplementation($accessor)" else "testImplementation $accessor"
+
+                        else ->
+                            if (isKts) "implementation($accessor)" else "implementation $accessor"
                     }
                 }
 
             if (depsToInject.isEmpty()) return@runWriteCommandAction
 
-            // 3. Inject using the robust helper
-            val updatedContent = injectIntoDependenciesBlock(content, depsToInject)
-            gradleFile.writeText(updatedContent)
+            val updated = injectIntoDependenciesBlock(content, depsToInject)
+            gradleFile.writeText(updated)
         }
     }
+
 
     /**
      * Finds the 'dependencies { ... }' block and injects new lines right at the start.
@@ -71,27 +81,32 @@ object DependencyInjector {
         newLines: List<String>
     ): String {
 
-        val regex = Regex(
-            """dependencies\s*\{([\s\S]*?)\}""",
-            RegexOption.MULTILINE
-        )
+        val marker = "dependencies {"
+        val index = content.indexOf(marker)
+        if (index == -1) return content
 
-        val match = regex.find(content) ?: return content
-
-        val existingBlock = match.groupValues[1]
+        val insertPos = index + marker.length
 
         val injection = buildString {
+            append("\n")
             newLines.forEach {
                 append("    ").append(it).append("\n")
             }
         }
 
-        val updatedBlock = "dependencies {\n$injection$existingBlock}"
-
-        return content.replaceRange(
-            match.range,
-            updatedBlock
-        )
+        return content.substring(0, insertPos) +
+                injection +
+                content.substring(insertPos)
     }
 
+    private fun ensurePluginAlias(gradleFile: File, alias: String) {
+        val content = gradleFile.readText()
+        if (!content.contains("alias($alias)")) {
+            val updated = content.replace(
+                "plugins {",
+                "plugins {\n    alias($alias)"
+            )
+            gradleFile.writeText(updated)
+        }
+    }
 }

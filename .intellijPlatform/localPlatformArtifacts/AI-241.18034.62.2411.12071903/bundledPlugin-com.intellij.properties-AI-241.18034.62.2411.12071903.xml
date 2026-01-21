@@ -1,0 +1,10 @@
+<ivy-module version="2.0">
+  <info organisation="bundledPlugin" module="com.intellij.properties" revision="AI-241.18034.62.2411.12071903"/>
+  <configurations>
+    <conf name="default" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="properties" ext="jar" conf="default" url="plugins/properties/lib"/>
+  </publications>
+  <dependencies/>
+</ivy-module>

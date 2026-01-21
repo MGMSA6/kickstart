@@ -1,0 +1,14 @@
+<ivy-module version="2.0">
+  <info organisation="bundledPlugin" module="JUnit" revision="AI-241.18034.62.2411.12071903"/>
+  <configurations>
+    <conf name="default" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="idea-junit" ext="jar" conf="default" url="plugins/junit/lib"/>
+    <artifact name="junit5-rt" ext="jar" conf="default" url="plugins/junit/lib"/>
+    <artifact name="junit-rt" ext="jar" conf="default" url="plugins/junit/lib"/>
+  </publications>
+  <dependencies>
+    <dependency org="bundledPlugin" name="com.intellij.java" rev="AI-241.18034.62.2411.12071903"/>
+  </dependencies>
+</ivy-module>

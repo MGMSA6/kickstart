@@ -1,0 +1,14 @@
+<ivy-module version="2.0">
+  <info organisation="bundledPlugin" module="org.jetbrains.plugins.gradle" revision="AI-241.18034.62.2411.12071903"/>
+  <configurations>
+    <conf name="default" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="gradle-jps" ext="jar" conf="default" url="plugins/gradle-java/lib"/>
+    <artifact name="gradle-java" ext="jar" conf="default" url="plugins/gradle-java/lib"/>
+  </publications>
+  <dependencies>
+    <dependency org="bundledPlugin" name="com.intellij.java" rev="AI-241.18034.62.2411.12071903"/>
+    <dependency org="bundledPlugin" name="com.intellij.gradle" rev="AI-241.18034.62.2411.12071903"/>
+  </dependencies>
+</ivy-module>

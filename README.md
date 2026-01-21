@@ -20,6 +20,7 @@ Kickstart removes repetitive setup work when starting a new Android project by a
 
 This structure is generated **for every project**, regardless of the selected architecture.
 
+```
 core/
  ├─ base/
  │   ├─ BasePresenter
@@ -63,26 +64,26 @@ util/
 
 App.kt  
 MainActivity.kt
-
+```
 
 # 🟦 MVVM (Model–View–ViewModel)
-
+```
 presentation/
  └─ feature/
      ├─ viewmodel/
      ├─ view/
      └─ state/
-
+```
 # 🟩 MVP (Model–View–Presenter)
-
+```
 presentation/
  └─ feature/
      ├─ FeatureContract.kt
      ├─ FeaturePresenter.kt
      └─ FeatureActivity.kt
-
+```
 # 🟨 MVI (Model–View–Intent)
-
+```
 presentation/
  └─ feature/
      ├─ FeatureContract.kt
@@ -93,22 +94,22 @@ core/
  └─ mvi/
      ├─ BaseMviViewModel
      └─ MviInterfaces
-
+```
 # 🌐 Networking
-
+```
 data/
  └─ remote/
      ├─ api/
      ├─ dto/
      └─ interceptor/
-
+```
 
 💉 Dependency Injection
-
+```
 di/
  ├─ AppModule
  └─ NetworkModule
-
+```
 
 # 📦 Dependency Configuration
 
@@ -129,3 +130,7 @@ Kickstart configures dependencies using **Gradle Version Catalogs**, including:
 3. Select architecture (**MVVM / MVP / MVI**)
 4. Confirm generation
 5. Start building features 🚀
+
+
+
+

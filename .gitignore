@@ -43,4 +43,4 @@ bin/
 .DS_Store
 
 
-*.hprof
+*.hprof*.hprof

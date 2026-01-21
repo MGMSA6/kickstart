@@ -2,27 +2,24 @@
 
 Kickstart is an **Android Studio / IntelliJ plugin** that helps you bootstrap Android projects instantly by generating a **clean architecture structure**, **core base classes**, and **essential dependencies**.
 
-> Skip boilerplate. Start building features immediately.
+Skip boilerplate. Start building features immediately.
 
 ---
 
-## 🎯 Why Kickstart?
+# 🎯 Purpose
 
-Starting a new Android project usually means repeating the same setup:
-- Creating architecture folders
-- Writing base classes and contracts
-- Setting up networking and DI
-- Managing Gradle dependencies
-
-**Kickstart automates this entire setup**, so you can focus on **business logic and UI** instead of configuration.
+Kickstart removes repetitive setup work when starting a new Android project by automatically generating:
+- Clean package structure
+- Core base classes
+- Networking and DI foundation
+- Architecture-ready feature layers
 
 ---
 
-## 🧱 Common Base Structure (Generated for All Architectures)
+# 🧱 Common Base Structure
 
-This structure is **shared across MVVM, MVP, and MVI** and contains only **architecture-agnostic foundations**.
+This structure is generated **for every project**, regardless of the selected architecture.
 
-```text
 core/
  ├─ base/
  │   ├─ BasePresenter
@@ -31,25 +28,25 @@ core/
  │   └─ Resource
 
 data/
- ├─ mapper/               # DTO ↔ Domain converters
+ ├─ mapper/
  ├─ remote/
  │   ├─ api/
  │   │   └─ ApiService
  │   ├─ dto/
  │   └─ interceptor/
  │       └─ LoggingInterceptor
- ├─ repository/           # Repository implementations
+ ├─ repository/
  └─ source/
-     └─ local/            # Room / local data source
+     └─ local/
 
 domain/
- ├─ model/                # Pure domain models
- ├─ repository/           # Repository interfaces
- └─ usecase/              # Business logic
+ ├─ model/
+ ├─ repository/
+ └─ usecase/
 
 di/
- ├─ AppModule              # App-level DI
- └─ NetworkModule          # Retrofit / OkHttp setup
+ ├─ AppModule
+ └─ NetworkModule
 
 ui/
  └─ theme/
@@ -64,88 +61,71 @@ util/
  ├─ ErrorHandler
  └─ HeaderProvider
 
-App.kt
+App.kt  
 MainActivity.kt
 
 
-🧩 Architecture-Specific Structures
+# 🟦 MVVM (Model–View–ViewModel)
 
-After generating the common base, Kickstart adds architecture-specific folders and classes based on your selection.
-
-🟦 MVVM (Model–View–ViewModel)
 presentation/
  └─ feature/
-     ├─ viewmodel/        # ViewModels
-     ├─ view/             # Activities / Fragments / Screens
-     └─ state/            # UI state models
+     ├─ viewmodel/
+     ├─ view/
+     └─ state/
 
-🟩 MVP (Model–View–Presenter)
+# 🟩 MVP (Model–View–Presenter)
+
 presentation/
  └─ feature/
-     ├─ FeatureContract.kt     # View & Presenter interfaces
-     ├─ FeaturePresenter.kt    # Business logic
-     └─ FeatureActivity.kt     # UI implementation
+     ├─ FeatureContract.kt
+     ├─ FeaturePresenter.kt
+     └─ FeatureActivity.kt
 
-🟨 MVI (Model–View–Intent)
+# 🟨 MVI (Model–View–Intent)
+
 presentation/
  └─ feature/
-     ├─ FeatureContract.kt     # Intent, State, SideEffect
-     ├─ FeatureViewModel.kt    # Reducer & intent handler
-     └─ FeatureScreen.kt       # Compose UI
+     ├─ FeatureContract.kt
+     ├─ FeatureViewModel.kt
+     └─ FeatureScreen.kt
 
 core/
  └─ mvi/
      ├─ BaseMviViewModel
      └─ MviInterfaces
 
-🌐 Networking Setup
+# 🌐 Networking
 
-Kickstart automatically configures:
+data/
+ └─ remote/
+     ├─ api/
+     ├─ dto/
+     └─ interceptor/
 
-Retrofit API service
-
-OkHttp client
-
-Logging interceptor
-
-Centralized error handling
-
-API constants and headers
 
 💉 Dependency Injection
 
-Application-level DI module
-
-Network DI module
-
-Clean and scalable DI setup
+di/
+ ├─ AppModule
+ └─ NetworkModule
 
 
-📦 Dependency Configuration
+# 📦 Dependency Configuration
 
-Kickstart adds essential dependencies using modern Gradle version catalogs:
+Kickstart configures dependencies using **Gradle Version Catalogs**, including:
 
-Lifecycle & ViewModel
+- Lifecycle & ViewModel
+- Kotlin Coroutines
+- Retrofit & OkHttp
+- Dependency Injection
+- KSP (Code Generation)
 
-Coroutines
+---
 
-Retrofit & OkHttp
+# ▶️ Usage
 
-Dependency Injection
-
-KSP (code generation)
-
-▶️ How to Use
-
-Open an Android project
-
-Navigate to Tools → Kickstart
-
-Select your architecture (MVVM / MVP / MVI)
-
-Click OK
-
-Start building features 🚀
-
-
-
+1. Open an Android project
+2. Go to **Tools → Kickstart**
+3. Select architecture (**MVVM / MVP / MVI**)
+4. Confirm generation
+5. Start building features 🚀
